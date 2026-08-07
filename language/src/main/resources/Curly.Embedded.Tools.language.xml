@@ -1,0 +1,282 @@
+<idea-plugin>
+    <dependencies>
+        <module name="intellij.platform.lang"/>
+    </dependencies>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- ARMv8 (AArch64) assembly ============================================================ -->
+        <fileType
+                name="ARMv8 Assembly"
+                language="ARMv8Assembly"
+                implementationClass="com.asulcons.embedded.armv8.ArmAsmFileType"
+                fieldName="INSTANCE"
+                extensions="s;asm;a64"/>
+        <lang.parserDefinition
+                language="ARMv8Assembly"
+                implementationClass="com.asulcons.embedded.armv8.parser.ArmAsmParserDefinition"/>
+        <lang.syntaxHighlighterFactory
+                language="ARMv8Assembly"
+                implementationClass="com.asulcons.embedded.armv8.highlighting.ArmAsmSyntaxHighlighterFactory"/>
+        <annotator
+                language="ARMv8Assembly"
+                implementationClass="com.asulcons.embedded.armv8.highlighting.ArmAsmAnnotator"/>
+        <colorSettingsPage
+                implementation="com.asulcons.embedded.armv8.highlighting.ArmAsmColorSettingsPage"/>
+        <lang.braceMatcher
+                language="ARMv8Assembly"
+                implementationClass="com.asulcons.embedded.armv8.editor.ArmAsmBraceMatcher"/>
+        <lang.commenter
+                language="ARMv8Assembly"
+                implementationClass="com.asulcons.embedded.armv8.editor.ArmAsmCommenter"/>
+        <lang.foldingBuilder
+                language="ARMv8Assembly"
+                implementationClass="com.asulcons.embedded.armv8.editor.ArmAsmFoldingBuilder"/>
+        <lang.psiStructureViewFactory
+                language="ARMv8Assembly"
+                implementationClass="com.asulcons.embedded.armv8.editor.ArmAsmStructureViewFactory"/>
+        <lang.findUsagesProvider
+                language="ARMv8Assembly"
+                implementationClass="com.asulcons.embedded.armv8.editor.ArmAsmFindUsagesProvider"/>
+        <lang.namesValidator
+                language="ARMv8Assembly"
+                implementationClass="com.asulcons.embedded.armv8.editor.ArmAsmNamesValidator"/>
+        <lang.documentationProvider
+                language="ARMv8Assembly"
+                implementationClass="com.asulcons.embedded.armv8.editor.ArmAsmDocumentationProvider"/>
+        <lang.formatter
+                language="ARMv8Assembly"
+                implementationClass="com.asulcons.embedded.armv8.formatting.ArmAsmFormattingModelBuilder"/>
+        <langCodeStyleSettingsProvider
+                implementation="com.asulcons.embedded.armv8.formatting.ArmAsmLanguageCodeStyleSettingsProvider"/>
+        <completion.contributor
+                language="ARMv8Assembly"
+                implementationClass="com.asulcons.embedded.armv8.completion.ArmAsmCompletionContributor"/>
+
+        <!-- GDB command scripts ================================================================ -->
+        <fileType
+                name="GDB Script"
+                language="GdbScript"
+                implementationClass="com.asulcons.embedded.gdb.GdbFileType"
+                fieldName="INSTANCE"
+                extensions="gdb;gdbinit"
+                fileNames=".gdbinit;gdbinit;.cuda-gdbinit"/>
+        <lang.parserDefinition
+                language="GdbScript"
+                implementationClass="com.asulcons.embedded.gdb.parser.GdbParserDefinition"/>
+        <lang.syntaxHighlighterFactory
+                language="GdbScript"
+                implementationClass="com.asulcons.embedded.gdb.highlighting.GdbSyntaxHighlighterFactory"/>
+        <annotator
+                language="GdbScript"
+                implementationClass="com.asulcons.embedded.gdb.highlighting.GdbAnnotator"/>
+        <colorSettingsPage
+                implementation="com.asulcons.embedded.gdb.highlighting.GdbColorSettingsPage"/>
+        <lang.braceMatcher
+                language="GdbScript"
+                implementationClass="com.asulcons.embedded.gdb.editor.GdbBraceMatcher"/>
+        <lang.commenter
+                language="GdbScript"
+                implementationClass="com.asulcons.embedded.gdb.editor.GdbCommenter"/>
+        <lang.foldingBuilder
+                language="GdbScript"
+                implementationClass="com.asulcons.embedded.gdb.editor.GdbFoldingBuilder"/>
+        <lang.psiStructureViewFactory
+                language="GdbScript"
+                implementationClass="com.asulcons.embedded.gdb.editor.GdbStructureViewFactory"/>
+        <lang.documentationProvider
+                language="GdbScript"
+                implementationClass="com.asulcons.embedded.gdb.editor.GdbDocumentationProvider"/>
+        <lang.formatter
+                language="GdbScript"
+                implementationClass="com.asulcons.embedded.gdb.formatting.GdbFormattingModelBuilder"/>
+        <langCodeStyleSettingsProvider
+                implementation="com.asulcons.embedded.gdb.formatting.GdbLanguageCodeStyleSettingsProvider"/>
+        <completion.contributor
+                language="GdbScript"
+                implementationClass="com.asulcons.embedded.gdb.completion.GdbCompletionContributor"/>
+        <!-- Hands `python … end` bodies to the Python plugin when one is installed; inert otherwise. -->
+        <multiHostInjector
+                implementation="com.asulcons.embedded.gdb.injection.GdbPythonInjector"/>
+        <lang.elementManipulator
+                forClass="com.asulcons.embedded.gdb.psi.GdbRawBody"
+                implementationClass="com.asulcons.embedded.gdb.psi.GdbRawBodyManipulator"/>
+        <editorNotificationProvider
+                implementation="com.asulcons.embedded.gdb.stubs.GdbPythonStubNotificationProvider"/>
+
+        <!-- GNU linker scripts ================================================================= -->
+        <fileType
+                name="GNU Linker Script"
+                language="GnuLinkerScript"
+                implementationClass="com.asulcons.embedded.linker.LinkerScriptFileType"
+                fieldName="INSTANCE"
+                extensions="ld;lds;ldscript"/>
+        <lang.parserDefinition
+                language="GnuLinkerScript"
+                implementationClass="com.asulcons.embedded.linker.parser.LinkerParserDefinition"/>
+        <lang.syntaxHighlighterFactory
+                language="GnuLinkerScript"
+                implementationClass="com.asulcons.embedded.linker.highlighting.LinkerSyntaxHighlighterFactory"/>
+        <annotator
+                language="GnuLinkerScript"
+                implementationClass="com.asulcons.embedded.linker.highlighting.LinkerAnnotator"/>
+        <colorSettingsPage
+                implementation="com.asulcons.embedded.linker.highlighting.LinkerColorSettingsPage"/>
+        <lang.braceMatcher
+                language="GnuLinkerScript"
+                implementationClass="com.asulcons.embedded.linker.editor.LinkerBraceMatcher"/>
+        <lang.commenter
+                language="GnuLinkerScript"
+                implementationClass="com.asulcons.embedded.linker.editor.LinkerCommenter"/>
+        <lang.foldingBuilder
+                language="GnuLinkerScript"
+                implementationClass="com.asulcons.embedded.linker.editor.LinkerFoldingBuilder"/>
+        <lang.psiStructureViewFactory
+                language="GnuLinkerScript"
+                implementationClass="com.asulcons.embedded.linker.editor.LinkerStructureViewFactory"/>
+        <lang.findUsagesProvider
+                language="GnuLinkerScript"
+                implementationClass="com.asulcons.embedded.linker.editor.LinkerFindUsagesProvider"/>
+        <lang.namesValidator
+                language="GnuLinkerScript"
+                implementationClass="com.asulcons.embedded.linker.editor.LinkerNamesValidator"/>
+        <lang.documentationProvider
+                language="GnuLinkerScript"
+                implementationClass="com.asulcons.embedded.linker.editor.LinkerDocumentationProvider"/>
+        <lang.formatter
+                language="GnuLinkerScript"
+                implementationClass="com.asulcons.embedded.linker.formatting.LinkerFormattingModelBuilder"/>
+        <langCodeStyleSettingsProvider
+                implementation="com.asulcons.embedded.linker.formatting.LinkerLanguageCodeStyleSettingsProvider"/>
+        <completion.contributor
+                language="GnuLinkerScript"
+                implementationClass="com.asulcons.embedded.linker.completion.LinkerCompletionContributor"/>
+
+        <!-- Inspections ======================================================================== -->
+        <localInspection
+                language="ARMv8Assembly"
+                bundle="messages.CurlyEmbeddedBundle"
+                key="inspection.armAsm.unknownMnemonic.name"
+                groupPath="Embedded"
+                groupName="ARMv8 Assembly"
+                enabledByDefault="true"
+                level="WARNING"
+                implementationClass="com.asulcons.embedded.armv8.inspections.ArmAsmUnknownMnemonicInspection"/>
+        <localInspection
+                language="ARMv8Assembly"
+                bundle="messages.CurlyEmbeddedBundle"
+                key="inspection.armAsm.unknownDirective.name"
+                groupPath="Embedded"
+                groupName="ARMv8 Assembly"
+                enabledByDefault="true"
+                level="WARNING"
+                implementationClass="com.asulcons.embedded.armv8.inspections.ArmAsmUnknownDirectiveInspection"/>
+        <localInspection
+                language="ARMv8Assembly"
+                bundle="messages.CurlyEmbeddedBundle"
+                key="inspection.armAsm.invalidRegister.name"
+                groupPath="Embedded"
+                groupName="ARMv8 Assembly"
+                enabledByDefault="true"
+                level="ERROR"
+                implementationClass="com.asulcons.embedded.armv8.inspections.ArmAsmInvalidRegisterInspection"/>
+        <localInspection
+                language="ARMv8Assembly"
+                bundle="messages.CurlyEmbeddedBundle"
+                key="inspection.armAsm.duplicateLabel.name"
+                groupPath="Embedded"
+                groupName="ARMv8 Assembly"
+                enabledByDefault="true"
+                level="ERROR"
+                implementationClass="com.asulcons.embedded.armv8.inspections.ArmAsmDuplicateLabelInspection"/>
+        <localInspection
+                language="ARMv8Assembly"
+                bundle="messages.CurlyEmbeddedBundle"
+                key="inspection.armAsm.unresolvedLocalLabel.name"
+                groupPath="Embedded"
+                groupName="ARMv8 Assembly"
+                enabledByDefault="true"
+                level="ERROR"
+                implementationClass="com.asulcons.embedded.armv8.inspections.ArmAsmUnresolvedLocalLabelInspection"/>
+        <localInspection
+                language="ARMv8Assembly"
+                bundle="messages.CurlyEmbeddedBundle"
+                key="inspection.armAsm.unbalancedRegion.name"
+                groupPath="Embedded"
+                groupName="ARMv8 Assembly"
+                enabledByDefault="true"
+                level="ERROR"
+                implementationClass="com.asulcons.embedded.armv8.inspections.ArmAsmUnbalancedRegionInspection"/>
+        <localInspection
+                language="ARMv8Assembly"
+                bundle="messages.CurlyEmbeddedBundle"
+                key="inspection.armAsm.immediateRange.name"
+                groupPath="Embedded"
+                groupName="ARMv8 Assembly"
+                enabledByDefault="true"
+                level="ERROR"
+                implementationClass="com.asulcons.embedded.armv8.inspections.ArmAsmImmediateRangeInspection"/>
+        <localInspection
+                language="GdbScript"
+                bundle="messages.CurlyEmbeddedBundle"
+                key="inspection.gdb.unknownCommand.name"
+                groupPath="Embedded"
+                groupName="GDB Script"
+                enabledByDefault="true"
+                level="WARNING"
+                implementationClass="com.asulcons.embedded.gdb.inspections.GdbUnknownCommandInspection"/>
+        <localInspection
+                language="GnuLinkerScript"
+                bundle="messages.CurlyEmbeddedBundle"
+                key="inspection.linker.unknownRegion.name"
+                groupPath="Embedded"
+                groupName="GNU Linker Script"
+                enabledByDefault="true"
+                level="ERROR"
+                implementationClass="com.asulcons.embedded.linker.inspections.LinkerUnknownRegionInspection"/>
+        <localInspection
+                language="GnuLinkerScript"
+                bundle="messages.CurlyEmbeddedBundle"
+                key="inspection.linker.incompleteRegion.name"
+                groupPath="Embedded"
+                groupName="GNU Linker Script"
+                enabledByDefault="true"
+                level="ERROR"
+                implementationClass="com.asulcons.embedded.linker.inspections.LinkerIncompleteRegionInspection"/>
+        <localInspection
+                language="GnuLinkerScript"
+                bundle="messages.CurlyEmbeddedBundle"
+                key="inspection.linker.duplicateRegion.name"
+                groupPath="Embedded"
+                groupName="GNU Linker Script"
+                enabledByDefault="true"
+                level="ERROR"
+                implementationClass="com.asulcons.embedded.linker.inspections.LinkerDuplicateRegionInspection"/>
+
+        <!-- Intention actions ================================================================== -->
+        <intentionAction>
+            <language>ARMv8Assembly</language>
+            <className>com.asulcons.embedded.armv8.intentions.ConvertNumberBaseIntention</className>
+            <bundleName>messages.CurlyEmbeddedBundle</bundleName>
+            <categoryKey>intention.category.armAsm</categoryKey>
+        </intentionAction>
+        <intentionAction>
+            <language>ARMv8Assembly</language>
+            <className>com.asulcons.embedded.armv8.intentions.ExportLabelIntention</className>
+            <bundleName>messages.CurlyEmbeddedBundle</bundleName>
+            <categoryKey>intention.category.armAsm</categoryKey>
+        </intentionAction>
+        <!-- Deliberately not scoped to a language: it has to be reachable from the injected Python
+             too, since that is where the unresolved `import gdb` the user is reacting to lives. -->
+        <intentionAction>
+            <className>com.asulcons.embedded.gdb.intentions.AddGdbPythonStubsIntention</className>
+            <bundleName>messages.CurlyEmbeddedBundle</bundleName>
+            <categoryKey>intention.category.gdb</categoryKey>
+        </intentionAction>
+        <intentionAction>
+            <language>GnuLinkerScript</language>
+            <className>com.asulcons.embedded.linker.intentions.ConvertRegionSizeIntention</className>
+            <bundleName>messages.CurlyEmbeddedBundle</bundleName>
+            <categoryKey>intention.category.linker</categoryKey>
+        </intentionAction>
+    </extensions>
+</idea-plugin>

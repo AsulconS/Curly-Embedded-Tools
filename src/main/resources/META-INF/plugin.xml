@@ -8,18 +8,31 @@
     <name>Curly-Embedded-Tools</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
-    <vendor url="https://www.yourcompany.com">YourCompany</vendor>
+    <vendor url="https://github.com/AsulconS" email="adrian.r.bedregal@gmail.com">AsulconS</vendor>
 
     <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/best-practices-for-listing.html#plugin-description -->
     <description><![CDATA[
-        Example of a plugin that is ready to work in a distributed environment.<br>
-        <em>Plugin is supposed to be installed into both frontend and backend IDE,
-        the set of features to be available is determined by their registration in either backend or frontend-specific XML descriptor files</em>
+        Bare-metal ARMv8 (AArch64) embedded development tooling.<br>
+        Adds custom language support for the three file kinds a QEMU + <code>gdb-multiarch</code> workflow
+        revolves around:
+        <ul>
+          <li><b>ARMv8 assembly</b> (<code>.s</code>, <code>.S</code>, <code>.asm</code>) &mdash; lexing, parsing,
+              syntax highlighting, formatting, completion, inspections and intentions.</li>
+          <li><b>GDB scripts</b> (<code>.gdbinit</code>, <code>*.gdb</code>) &mdash; command completion,
+              block structure checking and folding.</li>
+          <li><b>GNU linker scripts</b> (<code>.ld</code>, <code>.lds</code>) &mdash; section/region analysis
+              with navigation from <code>&gt; REGION</code> to its <code>MEMORY</code> declaration.</li>
+        </ul>
     ]]></description>
+
+    <!-- Only core language APIs are used, so the plugin is compatible with every IntelliJ-based IDE,
+         RustRover included. -->
+    <depends>com.intellij.modules.lang</depends>
 
     <content>
         <module name="Curly.Embedded.Tools.shared" loading="required"/>
+        <module name="Curly.Embedded.Tools.language" loading="required"/>
         <module name="Curly.Embedded.Tools.frontend"/>
         <module name="Curly.Embedded.Tools.backend"/>
     </content>

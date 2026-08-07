@@ -1,6 +1,9 @@
 [versions]
 kotlin-serialization = "1.9.0"
+junit4 = "4.13.2"
 
 [libraries]
 kotlin-serialization-core-jvm = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm", version.ref = "kotlin-serialization" }
 kotlin-serialization-json-jvm = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm", version.ref = "kotlin-serialization" }
+# The IntelliJ Platform test framework is built on JUnit 3/4; ParsingTestCase needs it on the classpath.
+junit4 = { module = "junit:junit", version.ref = "junit4" }

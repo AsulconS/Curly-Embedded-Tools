@@ -1,0 +1,8 @@
+<html><body>
+Reports instruction mnemonics that GNU <code>as</code> would not recognise for an AArch64 target.
+<p>Condition suffixes (<code>b.eq</code>) and the <code>2</code> upper-half SIMD forms
+(<code>saddl2</code>) are accepted, as are macros defined in the same file with <code>.macro</code>
+or <code>#define</code> and register aliases introduced with <code>.req</code>.</p>
+<p>The instruction set covered here is broad but not exhaustive; if your toolchain accepts a mnemonic
+this inspection rejects, turn the inspection off rather than changing working code.</p>
+</body></html>

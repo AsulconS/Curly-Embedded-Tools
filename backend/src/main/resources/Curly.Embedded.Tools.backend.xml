@@ -1,0 +1,13 @@
+<idea-plugin>
+    <dependencies>
+        <module name="intellij.platform.backend"/>
+        <module name="intellij.platform.kernel.backend"/>
+        <module name="Curly.Embedded.Tools.shared"/>
+
+        <module name="intellij.platform.lsp"/>
+    </dependencies>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <platform.rpc.backend.remoteApiProvider implementation="com.asulcons.BackendRpcApiProvider"/>
+    </extensions>
+</idea-plugin>

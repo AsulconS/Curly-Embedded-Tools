@@ -5,7 +5,7 @@
 
     <!-- Public plugin name should be written in Title Case.
      Guidelines: https://plugins.jetbrains.com/docs/marketplace/best-practices-for-listing.html#plugin-name -->
-    <name>Curly-Embedded-Tools</name>
+    <name>Curly Embedded Tools</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor url="https://github.com/AsulconS" email="adrian.r.bedregal@gmail.com">AsulconS</vendor>

@@ -42,3 +42,6 @@ bin/
 
 ### Auto-generated content ###
 samples/gdb.pyi
+
+### Plugin signing credentials ###
+/certificate/

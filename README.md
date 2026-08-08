@@ -1,4 +1,4 @@
-# Curly-Embedded-Tools
+# Curly Embedded Tools
 
 [![Twitter Follow](https://img.shields.io/badge/follow-%40JBPlatform-1DA1F2?logo=twitter)](https://twitter.com/JBPlatform)
 [![Developers Forum](https://img.shields.io/badge/JetBrains%20Platform-Join-blue)][jb:forum]
@@ -154,15 +154,138 @@ Within the default project structure, there is a `.run` directory provided conta
 > [!NOTE]
 > You can find the logs from the running task in the `idea.log` tab.
 
+## IDE compatibility
+
+The `<idea-version>` element is **generated** by `patchPluginXml` from
+`intellijPlatform { pluginConfiguration { ideaVersion { … } } }` — editing it in
+[plugin.xml][file:plugin.xml] by hand has no effect, the generated value wins.
+
+```
+<idea-version since-build="261" />     ← 2026.1 and every later release
+```
+
+`sinceBuild` is pinned at `261` instead of being inherited from the compile target, so bumping
+`intellijIdea(…)` cannot silently drop users on an older branch. `untilBuild` is set to
+`provider { null }`, which emits **no upper bound** — that is what lets a build compiled against 2026.1
+install into 2026.2 and beyond. Add an upper bound only against a known incompatibility: a stale one
+locks users out for a whole release cycle and can only be lifted by publishing a new version.
+
+Compiling against one branch and running on a later one is checked with the JetBrains Plugin Verifier —
+the same tool Marketplace moderation runs:
+
+```bash
+./gradlew verifyPlugin     # downloads the IDEs listed in pluginVerification.ides
+```
+
+> [!NOTE]
+> A **"Not compatible with the version of your running IDE"** banner on the Marketplace page usually
+> means the plugin is still in moderation, not that `idea-version` is wrong: an unapproved plugin has no
+> published build, and that banner is how the page renders "nothing installable for you". Confirm with
+> `https://plugins.jetbrains.com/api/plugins/<id>` — check `approve` and `hasUnapprovedUpdate` — before
+> changing any metadata. The plugin page is JS-rendered, so fetching the HTML tells you nothing.
+
+## Signing the plugin
+
+`signPlugin` reads its credentials from the `intellijPlatform { signing { … } }` block in the root
+[build.gradle.kts][file:build.gradle.kts], which accepts two sources — a local PKCS#12 keystore, or three
+environment variables for CI. The keystore wins whenever `certificate/keystore.p12` is present.
+
+### Local setup
+
+The whole `certificate/` directory is gitignored. Pick a password, export it as `PRIVATE_KEY_PASSWORD`,
+and generate a 4096-bit key with a self-signed 365-day chain:
+
+```bash
+mkdir -p certificate
+openssl genpkey -algorithm RSA -out private.pem -pkeyopt rsa_keygen_bits:4096
+openssl req -new -x509 -days 365 -key private.pem -out certificate/chain.crt \
+  -subj "/CN=AsulconS/O=AsulconS/emailAddress=adrian.r.bedregal@gmail.com"
+openssl pkcs12 -export -inkey private.pem -in certificate/chain.crt \
+  -name curly-embedded-tools -out certificate/keystore.p12 -passout pass:"$PRIVATE_KEY_PASSWORD"
+rm private.pem
+```
+
+> [!IMPORTANT]
+> Use a **PKCS#12 keystore**, not the `privateKeyFile` route shown in [Plugin Signing][docs:signing].
+> Marketplace ZIP Signer 0.1.43 hands encrypted PEM keys to Bouncy Castle without registering its
+> security provider, so on a stock JDK an `openssl genpkey -aes-256-cbc` key fails with
+> `Cannot find any provider supporting AES/CBC/PKCS7Padding`, and a traditional-format one fails with
+> `PBKDF-OpenSSL SecretKeyFactory not available`. `privateKeyFile` therefore only works with an
+> *unencrypted* key. A keystore is read through plain JCA and stays password-protected at rest.
+>
+> Keep the password ASCII and free of whitespace — it is passed to the signer as a command-line
+> argument. A stray `\r` from `openssl rand -base64 … | tr -d '\n'` surfaces as the misleading
+> `keystore password was incorrect / Password is not ASCII`.
+
+Then sign, and verify the result against the chain:
+
+```bash
+export PRIVATE_KEY_PASSWORD='…'
+./gradlew signPlugin
+./gradlew verifyPluginSignature
+```
+
+`signPlugin` writes `build/distributions/Curly-Embedded-Tools-<version>-signed.zip` alongside the
+unsigned archive; `buildPlugin` is unaffected. Run the two tasks in **separate invocations** —
+`verifyPluginSignature` consumes `signPlugin`'s output without declaring the dependency, so requesting
+both at once fails Gradle's implicit-dependency validation.
+
+### CI setup
+
+Export the PEM text directly (the values are multi-line; base64-encode them if your secret store cannot
+hold newlines, and decode before exporting):
+
+| Variable | Contents |
+|---|---|
+| `CERTIFICATE_CHAIN` | contents of `chain.crt` |
+| `PRIVATE_KEY` | contents of an **unencrypted** `private.pem` |
+| `PRIVATE_KEY_PASSWORD` | key password — omit for an unencrypted key |
+
 ## Publishing the plugin
 
 > [!TIP]
 > Make sure to follow all guidelines listed in [Publishing a Plugin][docs:publishing] to follow all recommended and required steps.
 
-Releasing a plugin to [JetBrains Marketplace](https://plugins.jetbrains.com) is a straightforward operation that uses the `publishPlugin` Gradle task provided by
-the [intellij-platform-gradle-plugin][gh:intellij-platform-gradle-plugin].
+Releasing to [JetBrains Marketplace](https://plugins.jetbrains.com) uses the `publishPlugin` task, configured
+by the `intellijPlatform { publishing { … } }` block in the root [build.gradle.kts][file:build.gradle.kts]:
 
-You can also upload the plugin to the [JetBrains Plugin Repository](https://plugins.jetbrains.com/plugin/upload) manually via UI.
+```bash
+export PUBLISH_TOKEN='…'          # https://plugins.jetbrains.com/author/me/tokens
+export PRIVATE_KEY_PASSWORD='…'   # publishPlugin uploads the *signed* archive
+./gradlew publishPlugin
+```
+
+> [!IMPORTANT]
+> The **first** upload of a plugin has to go through the [upload form](https://plugins.jetbrains.com/plugin/upload);
+> `publishPlugin` only publishes updates to a plugin Marketplace already knows. `<id>` in
+> [plugin.xml][file:plugin.xml] is what ties the two together and cannot change afterwards.
+
+`publishPlugin` pulls `signPlugin` into the task graph — a `PUBLISH_TOKEN` on its own is not enough, the
+signing key has to be reachable as well. See [Signing the plugin](#signing-the-plugin).
+
+### Release channel
+
+The channel is derived from the version's pre-release label, so it tracks `version` in
+[gradle.properties][file:gradle.properties] instead of being pinned:
+
+| `version` | Channel | Who sees it |
+|---|---|---|
+| `1.0.0` | `default` | every IDE |
+| `1.0.0-SNAPSHOT` | `snapshot` | only users who added the channel as a custom repository |
+| `2.1.7-alpha.3` | `alpha` | idem |
+
+At the committed `1.0.0` this publishes to `default`, visible to every IDE — add a pre-release label to
+route a build to an opt-in channel instead. Marketplace refuses a second artifact with the same version, so
+recovering from a wrong-channel upload costs a version number: check the table before publishing.
+
+## License
+
+Licensed under the [Apache License, Version 2.0](./LICENSE).
+
+Portions of this repository — the Gradle build configuration, the split-mode module layout, and the
+`frontend`/`backend`/`shared` chat sample — derive from the Apache-2.0 licensed
+[IntelliJ Platform plugin template](https://github.com/JetBrains/intellij-platform-plugin-template),
+Copyright 2000-2021 JetBrains s.r.o. See [NOTICE](./NOTICE) for attributions.
 
 ## Useful links
 
@@ -179,6 +302,7 @@ You can also upload the plugin to the [JetBrains Plugin Repository](https://plug
 [docs:logo]: https://plugins.jetbrains.com/docs/intellij/plugin-icon-file.html?from=IJPluginReadmeFile
 [docs:plugin.xml]: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html?from=IJPluginReadmeFile
 [docs:publishing]: https://plugins.jetbrains.com/docs/intellij/publishing-plugin.html?from=IJPluginReadmeFile
+[docs:signing]: https://plugins.jetbrains.com/docs/intellij/plugin-signing.html?from=IJPluginReadmeFile
 [docs:remote-dev]: https://plugins.jetbrains.com/docs/intellij/plugin-content-modules.html?from=IJPluginReadmeFile
 [docs:target-version]: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html?from=IJPluginReadmeFile#target-versions
 [docs:testing]: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html?from=IJPluginReadmeFile#testing

@@ -1,0 +1,17 @@
+Curly Embedded Tools
+Copyright 2026 AsulconS
+
+This product includes software developed at JetBrains s.r.o.
+(https://www.jetbrains.com/).
+
+The Gradle build configuration, the split-mode module layout, and the
+frontend/backend/shared chat sample are derived from the JetBrains IntelliJ
+Platform plugin template:
+
+    Copyright 2000-2021 JetBrains s.r.o.
+    Licensed under the Apache License, Version 2.0
+    https://github.com/JetBrains/intellij-platform-plugin-template
+
+The GDB Python type stub in language/src/main/resources/stubs/gdb.pyi was
+written from the public GDB Python API reference. It contains no code from GDB
+itself and carries no GNU GPL obligation.

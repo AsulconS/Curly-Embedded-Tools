@@ -73,7 +73,15 @@ object GdbPythonStubs {
         try {
             directory.createChildData(this, STUB_NAME).setBinaryContent(contents)
         } catch (e: IOException) {
-            throw IncorrectOperationException("cannot write $STUB_NAME to ${directory.presentableUrl}", e)
+            // `e as Throwable` is load-bearing, not noise. 2026.1 carries both
+            // `IncorrectOperationException(String, Throwable)` and `(String, Exception)`; an IOException
+            // binds to the more specific `(String, Exception)`, which 2026.2 removed. That compiles
+            // clean against 261 and throws NoSuchMethodError on 262 — the Plugin Verifier is the only
+            // thing that catches it. Upcasting pins the overload that exists in both.
+            throw IncorrectOperationException(
+                "cannot write $STUB_NAME to ${directory.presentableUrl}",
+                e as Throwable,
+            )
         }
     }
 

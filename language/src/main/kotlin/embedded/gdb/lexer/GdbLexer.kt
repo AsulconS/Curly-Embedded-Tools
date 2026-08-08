@@ -67,6 +67,7 @@ class GdbLexer : LexerBase() {
         if (currentState == LINE_START && (c.isLetter() || c == '_' || c == '!')) return scanCommand()
 
         return when {
+            c == '\\' -> scanBackslash()
             c == '"' -> scanString('"', GdbTokens.STRING)
             c == '\'' -> scanString('\'', GdbTokens.CHAR)
             c == '$' -> scanDollarVariable()
@@ -193,6 +194,44 @@ class GdbLexer : LexerBase() {
         return type
     }
 
+    /**
+     * A backslash is ordinary argument text, never a bad character: GDB reads C-style escapes in the
+     * text `echo` and `printf` print, and a backslash before a line break continues the command.
+     *
+     * Which escapes actually mean something is the individual command's business — GDB itself passes an
+     * unrecognised one through as the plain character — so every `\x` is taken at face value rather than
+     * checked against a list this side of the debugger has no authority over.
+     */
+    private fun scanBackslash(): IElementType {
+        val next = tokenStartOffset + 1
+        if (next >= bufferEndOffset) {
+            tokenEndOffset = next
+            return GdbTokens.ESCAPE_SEQUENCE
+        }
+
+        val escaped = buffer[next]
+        if (escaped == '\n' || escaped == '\r') {
+            // The line break belongs to this token rather than to the whitespace after it. Left in
+            // whitespace it would end the statement twice over: the lexer would drop back to
+            // LINE_START and read the continued line's first word as a command, and `hasLineBreakBefore`
+            // would stop the parser at the same place.
+            var i = next
+            if (escaped == '\r' && i + 1 < bufferEndOffset && buffer[i + 1] == '\n') i++
+            tokenEndOffset = i + 1
+            followingState = if (currentState == RAW_HEAD) RAW_BODY else currentState
+            return GdbTokens.LINE_CONTINUATION
+        }
+
+        var i = next + 1
+        if (escaped in '0'..'7') {
+            // Octal, as in `\033`: up to three digits.
+            val limit = minOf(next + 3, bufferEndOffset)
+            while (i < limit && buffer[i] in '0'..'7') i++
+        }
+        tokenEndOffset = i
+        return GdbTokens.ESCAPE_SEQUENCE
+    }
+
     private fun scanDollarVariable(): IElementType {
         var i = tokenStartOffset + 1
         while (i < bufferEndOffset && (buffer[i].isLetterOrDigit() || buffer[i] == '_')) i++
@@ -242,8 +281,9 @@ class GdbLexer : LexerBase() {
 
     private fun isCommandChar(c: Char): Boolean = c.isLetterOrDigit() || c == '_' || c == '-'
 
+    /** No `\`: a backslash ends the word and is lexed as the escape it is, mid-word or not. */
     private fun isWordChar(c: Char): Boolean =
-        c.isLetterOrDigit() || c == '_' || c == '.' || c == '-' || c == '/' || c == '~' || c == '\\'
+        c.isLetterOrDigit() || c == '_' || c == '.' || c == '-' || c == '/' || c == '~'
 
     private fun isHex(c: Char): Boolean =
         c.isDigit() || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')

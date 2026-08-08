@@ -31,6 +31,12 @@ object GdbTokens {
     @JvmField val STRING = GdbTokenType("STRING")
     @JvmField val CHAR = GdbTokenType("CHAR")
 
+    /** A backslash escape in argument text: the `\n` in `echo \n--- state ---\n`. */
+    @JvmField val ESCAPE_SEQUENCE = GdbTokenType("ESCAPE_SEQUENCE")
+
+    /** A trailing backslash together with the line break it swallows, joining the next line on. */
+    @JvmField val LINE_CONTINUATION = GdbTokenType("LINE_CONTINUATION")
+
     /** Convenience variable, register or value-history reference: `$pc`, `$x0`, `$1`. */
     @JvmField val DOLLAR_VARIABLE = GdbTokenType("DOLLAR_VARIABLE")
 

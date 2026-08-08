@@ -107,6 +107,17 @@ class GdbParserTest : EmbeddedParsingTestCase("", "gdb", GdbParserDefinition()) 
         assertFalse("a document body is prose, not code", documentBody!!.isValidHost)
     }
 
+    fun testEscapesInArgumentTextAreNotSyntaxErrors() {
+        assertNoErrors("""echo \n--- PROCESSOR STATE ---\n""" + "\n")
+    }
+
+    fun testAContinuedLineIsStillOneCommand() {
+        val file = parse("set args --target \\\n  aarch64\n")
+        val commands = PsiTreeUtil.findChildrenOfType(file, GdbCommand::class.java)
+        assertEquals("the continuation should not start a second command: $commands", 1, commands.size)
+        assertEquals("set", commands.first().commandName)
+    }
+
     fun testUserDefinedCommandsAreCollected() {
         val file = parse("define reset\n  monitor system_reset\nend\n") as GdbFile
         assertEquals(setOf("reset"), file.definedCommands)

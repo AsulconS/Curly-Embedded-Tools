@@ -54,6 +54,10 @@ object GdbColors {
         createTextAttributesKey("GDB_STRING", DefaultLanguageHighlighterColors.STRING)
     val IDENTIFIER: TextAttributesKey =
         createTextAttributesKey("GDB_IDENTIFIER", DefaultLanguageHighlighterColors.IDENTIFIER)
+
+    /** The `\n` in `echo \n`, and the trailing `\` that joins the next line onto the command. */
+    val ESCAPE_SEQUENCE: TextAttributesKey =
+        createTextAttributesKey("GDB_ESCAPE_SEQUENCE", DefaultLanguageHighlighterColors.VALID_STRING_ESCAPE)
     val OPERATOR: TextAttributesKey =
         createTextAttributesKey("GDB_OPERATOR", DefaultLanguageHighlighterColors.OPERATION_SIGN)
     val BRACES: TextAttributesKey =
@@ -80,6 +84,8 @@ class GdbSyntaxHighlighter : SyntaxHighlighterBase() {
             put(GdbTokens.STRING, GdbColors.STRING)
             put(GdbTokens.CHAR, GdbColors.STRING)
             put(GdbTokens.IDENTIFIER, GdbColors.IDENTIFIER)
+            put(GdbTokens.ESCAPE_SEQUENCE, GdbColors.ESCAPE_SEQUENCE)
+            put(GdbTokens.LINE_CONTINUATION, GdbColors.ESCAPE_SEQUENCE)
             put(GdbTokens.OPERATOR, GdbColors.OPERATOR)
             put(GdbTokens.LBRACE, GdbColors.BRACES)
             put(GdbTokens.RBRACE, GdbColors.BRACES)
@@ -137,7 +143,7 @@ class GdbColorSettingsPage : ColorSettingsPage {
         if ${'$'}pc == 0x40000000
             printf "reset vector reached\n"
         else
-            echo unexpected entry point\n
+            echo \n--- UNEXPECTED ENTRY POINT ---\n
         end
 
         continue
@@ -155,6 +161,7 @@ class GdbColorSettingsPage : ColorSettingsPage {
             AttributesDescriptor(EmbeddedBundle.message("gdb.color.identifier"), GdbColors.IDENTIFIER),
             AttributesDescriptor(EmbeddedBundle.message("gdb.color.number"), GdbColors.NUMBER),
             AttributesDescriptor(EmbeddedBundle.message("gdb.color.string"), GdbColors.STRING),
+            AttributesDescriptor(EmbeddedBundle.message("gdb.color.escapeSequence"), GdbColors.ESCAPE_SEQUENCE),
             AttributesDescriptor(EmbeddedBundle.message("gdb.color.comment"), GdbColors.COMMENT),
             AttributesDescriptor(EmbeddedBundle.message("gdb.color.operator"), GdbColors.OPERATOR),
             AttributesDescriptor(EmbeddedBundle.message("gdb.color.braces"), GdbColors.BRACES),

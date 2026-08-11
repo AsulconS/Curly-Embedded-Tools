@@ -1,18 +1,18 @@
 <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
         <linearGradient id="flame" x1="12" y1="4" x2="28" y2="17.6" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#FFDF6B"/>
-            <stop offset="1" stop-color="#FFC331"/>
+            <stop stop-color="#FFE585"/>
+            <stop offset="1" stop-color="#FFCB48"/>
         </linearGradient>
     </defs>
     <path d="M12.3 17.6C11.3 13.7 12.4 9.8 15.2 6.4C16.8 4.4 18.8 2.9 20.8 2.1C22.2 3.3 22.6 5.2 21.9 7C21.3 8.5 20 9.5 18.6 10.4C17.3 11.2 16.6 12.1 16.9 12.9C17.2 13.7 18.3 13.8 19.2 13.2C20.7 12.2 21.8 10.4 22.2 8.2C24.7 9.2 26.7 11.2 27.6 13.7C28 15 28.1 16.4 28 17.6Z"
           fill="url(#flame)"/>
     <path d="M20.5 3.1C17.8 5.1 15.7 7.5 14.8 10.1C13.8 12.8 14.5 15.4 16.8 16.5C15.4 14.4 15.6 12.3 17 10.7C18.2 9.3 20 8.4 21 7C22 5.6 21.8 4.2 20.5 3.1Z"
-          fill="#FFF6CE"/>
-    <circle cx="25.2" cy="7.9" r="1.2" fill="#FFD549"/>
-    <rect x="2.7" y="24.4" width="3.5" height="7.5" rx="1.75" fill="#0099F5"/>
-    <rect x="33.8" y="24.4" width="3.5" height="7.5" rx="1.75" fill="#0099F5"/>
-    <rect x="8.1" y="17.6" width="23.9" height="20.4" rx="3" fill="#0099F5"/>
+          fill="#FFF9DE"/>
+    <circle cx="25.2" cy="7.9" r="1.2" fill="#FFDB63"/>
+    <rect x="2.7" y="24.4" width="3.5" height="7.5" rx="1.75" fill="#1FA8FF"/>
+    <rect x="33.8" y="24.4" width="3.5" height="7.5" rx="1.75" fill="#1FA8FF"/>
+    <rect x="8.1" y="17.6" width="23.9" height="20.4" rx="3" fill="#1FA8FF"/>
     <circle cx="11.8" cy="21.3" r=".95" fill="#fff"/>
     <circle cx="14.9" cy="28.3" r="2.45" fill="#fff"/>
     <circle cx="25.3" cy="28.3" r="2.45" fill="#fff"/>
